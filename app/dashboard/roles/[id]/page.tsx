@@ -16,19 +16,28 @@ export default async function RoleDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="max-w-xl">
-      <h1 className="text-2xl font-semibold">{role.title}</h1>
-      <p className="text-muted-foreground mb-1">
-        {role.companies?.name}
-      </p>
-      <p className="text-sm text-muted-foreground mb-6">Stage: {role.stage}</p>
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight">{role.title}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{role.companies?.name}</p>
+        <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded-full border text-muted-foreground">
+          {role.stage?.replace(/_/g, " ")}
+        </span>
+      </div>
 
       {role.source_url && (
-        <a href={role.source_url} target="_blank" rel="noopener noreferrer" className="text-sm underline block mb-4">
-          Job posting
+        <a
+          href={role.source_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block text-sm underline underline-offset-4 text-muted-foreground hover:text-foreground transition-colors mb-6"
+        >
+          View job posting
         </a>
       )}
 
-      {role.job_description && <p className="mb-6 whitespace-pre-wrap">{role.job_description}</p>}
+      {role.job_description && (
+        <p className="text-sm whitespace-pre-wrap text-muted-foreground">{role.job_description}</p>
+      )}
     </div>
   );
 }

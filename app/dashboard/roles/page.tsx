@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Role } from "@/lib/types";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function RolesPage() {
   const supabase = await createClient();
@@ -12,31 +13,29 @@ export default async function RolesPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Roles</h1>
-        <Link href="/dashboard/roles/new" className="text-sm underline">
-          + New role
-        </Link>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight">Roles</h1>
+        <Button asChild variant="outline" size="sm">
+          <Link href="/dashboard/roles/new">Add role</Link>
+        </Button>
       </div>
 
       {!roles?.length && (
-        <p className="text-muted-foreground">No roles yet. Add your first one.</p>
+        <p className="text-sm text-muted-foreground">No roles yet. Add your first one.</p>
       )}
 
-      <div className="grid gap-3">
+      <div className="flex flex-col divide-y">
         {roles?.map((r) => (
           <Link
             key={r.id}
             href={`/dashboard/roles/${r.id}`}
-            className="border rounded-lg p-4 hover:bg-muted/50 block"
+            className="py-4 flex justify-between items-start hover:bg-muted/50 -mx-3 px-3 rounded-lg transition-colors"
           >
-            <div className="flex justify-between">
-              <span className="font-medium">{r.title}</span>
-              <span className="text-xs text-muted-foreground">{r.stage}</span>
+            <div>
+              <p className="font-medium">{r.title}</p>
+              <p className="text-sm text-muted-foreground mt-0.5">{r.companies?.name}</p>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {r.companies?.name}
-            </div>
+            <span className="text-xs text-muted-foreground mt-1">{r.stage?.replace(/_/g, " ")}</span>
           </Link>
         ))}
       </div>

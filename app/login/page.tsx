@@ -17,18 +17,32 @@ export default function LoginPage() {
     setSent(true);
   }
 
-  if (sent) return <p className="p-8">Check your email for a login link.</p>;
+  if (sent)
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-muted-foreground">Check your email for a login link.</p>
+      </div>
+    );
 
   return (
-    <div className="flex flex-col gap-4 p-8 max-w-sm mx-auto mt-20">
-      <h1 className="text-xl font-semibold">WarmPath</h1>
-      <Input
-        type="email"
-        placeholder="you@email.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <Button onClick={handleLogin}>Send magic link</Button>
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="w-full max-w-xs flex flex-col gap-6">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">WarmPath</h1>
+          <p className="text-sm text-muted-foreground mt-1">Sign in to continue</p>
+        </div>
+        <div className="flex flex-col gap-3">
+          <Input
+            type="email"
+            placeholder="you@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Button onClick={handleLogin} className="w-full">
+            Send magic link
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
