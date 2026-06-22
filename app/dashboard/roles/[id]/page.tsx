@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Role } from "@/lib/types";
 import { notFound } from "next/navigation";
+import { StageSelect } from "./stage-select";
 
 export default async function RoleDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -19,9 +20,7 @@ export default async function RoleDetailPage({ params }: { params: Promise<{ id:
       <div className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">{role.title}</h1>
         <p className="text-sm text-muted-foreground mt-1">{role.companies?.name}</p>
-        <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded-full border text-muted-foreground">
-          {role.stage?.replace(/_/g, " ")}
-        </span>
+        <StageSelect roleId={id} currentStage={role.stage} />
       </div>
 
       {role.source_url && (
