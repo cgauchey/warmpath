@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Contact, Interaction } from "@/lib/types";
 import { addInteraction } from "./actions";
+import { InteractionHistory } from "./interaction-history";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
     .from("interactions")
     .select("*")
     .eq("contact_id", id)
-    .order("created_at", { ascending: false })
+    .order("interaction_date", { ascending: false, nullsFirst: false })
     .returns<Interaction[]>();
 
   return (
@@ -53,6 +54,10 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
           </select>
           <Textarea name="summary" placeholder="What happened" rows={3} />
           <div className="flex flex-col gap-1.5">
+            <label className="text-xs text-muted-foreground">Interaction date</label>
+            <Input type="date" name="interaction_date" />
+          </div>
+          <div className="flex flex-col gap-1.5">
             <label className="text-xs text-muted-foreground">Follow up by</label>
             <Input type="date" name="follow_up_date" />
           </div>
@@ -60,24 +65,7 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
         </form>
       </section>
 
-      <section>
-        <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-4">History</h2>
-        {!interactions?.length && <p className="text-sm text-muted-foreground">No interactions yet.</p>}
-        <div className="flex flex-col divide-y">
-          {interactions?.map((i) => (
-            <div key={i.id} className="py-3">
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{i.type?.replace(/_/g, " ")}</span>
-                <span>{new Date(i.created_at).toLocaleDateString()}</span>
-              </div>
-              {i.summary && <p className="text-sm mt-1">{i.summary}</p>}
-              {i.follow_up_date && (
-                <p className="text-xs text-muted-foreground mt-1">Follow up: {i.follow_up_date}</p>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
+      <InteractionHistory interactions={interactions ?? []} contactId={id} />
     </div>
   );
 }

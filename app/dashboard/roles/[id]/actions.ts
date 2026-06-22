@@ -12,6 +12,7 @@ export async function addInteraction(roleId: string, formData: FormData) {
     role_id: roleId,
     type: formData.get("type") as string,
     summary: (formData.get("summary") as string) || null,
+    interaction_date: (formData.get("interaction_date") as string) || null,
     follow_up_date: (formData.get("follow_up_date") as string) || null,
   });
 

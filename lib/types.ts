@@ -39,6 +39,7 @@ export type Interaction = {
   role_id: string | null;
   type: "email" | "call" | "linkedin" | "coffee_chat" | "interview";
   summary: string | null;
+  interaction_date: string | null;
   follow_up_date: string | null;
   created_at: string;
 };
