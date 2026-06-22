@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Contact, Interaction } from "@/lib/types";
 import { addInteraction } from "./actions";
 import { InteractionHistory } from "./interaction-history";
+import { StageSelect } from "./stage-select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -33,9 +34,7 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
         <p className="text-sm text-muted-foreground mt-1">
           {contact.role_title}{contact.companies?.name && ` · ${contact.companies.name}`}
         </p>
-        <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded-full border text-muted-foreground">
-          {contact.stage?.replace(/_/g, " ")}
-        </span>
+        <StageSelect contactId={id} currentStage={contact.stage} />
       </div>
 
       {contact.notes && (

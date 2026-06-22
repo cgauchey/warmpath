@@ -2,6 +2,21 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
+export async function updateContactStage(contactId: string, stage: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from("contacts")
+    .update({ stage })
+    .eq("id", contactId)
+    .eq("user_id", user.id);
+
+  if (error) throw error;
+  revalidatePath(`/dashboard/contacts/${contactId}`);
+}
+
 export async function deleteInteraction(contactId: string, interactionId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

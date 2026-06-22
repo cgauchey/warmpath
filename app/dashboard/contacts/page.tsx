@@ -2,14 +2,30 @@ import { createClient } from "@/lib/supabase/server";
 import { Contact } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-export default async function ContactsPage() {
+export default async function ContactsPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const { q } = await searchParams;
   const supabase = await createClient();
-  const { data: contacts } = await supabase
+
+  const { data: allContacts } = await supabase
     .from("contacts")
     .select("*, companies(name)")
     .order("created_at", { ascending: false })
     .returns<Contact[]>();
+
+  const contacts = q
+    ? allContacts?.filter((c) => {
+        const search = q.toLowerCase();
+        return (
+          c.name?.toLowerCase().includes(search) ||
+          c.role_title?.toLowerCase().includes(search) ||
+          c.stage?.replace(/_/g, " ").toLowerCase().includes(search) ||
+          c.notes?.toLowerCase().includes(search) ||
+          c.companies?.name?.toLowerCase().includes(search)
+        );
+      })
+    : allContacts;
 
   return (
     <div>
@@ -20,8 +36,12 @@ export default async function ContactsPage() {
         </Button>
       </div>
 
+      <form className="mb-6">
+        <Input type="search" name="q" placeholder="Search contacts" defaultValue={q ?? ""} />
+      </form>
+
       {!contacts?.length && (
-        <p className="text-sm text-muted-foreground">No contacts yet. Add your first one.</p>
+        <p className="text-sm text-muted-foreground">{q ? "No contacts found." : "No contacts yet. Add your first one."}</p>
       )}
 
       <div className="flex flex-col divide-y">
