@@ -3,6 +3,7 @@ import { Contact } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { StatusBadge } from "@/components/status-badge";
 
 export default async function ContactsPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q } = await searchParams;
@@ -57,7 +58,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: Pro
                 {c.role_title}{c.companies?.name && ` · ${c.companies.name}`}
               </p>
             </div>
-            <span className="text-xs text-muted-foreground mt-1">{c.stage?.replace(/_/g, " ")}</span>
+            <StatusBadge stage={c.stage} type="contact" />
           </Link>
         ))}
       </div>

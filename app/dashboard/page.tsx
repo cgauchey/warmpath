@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { Card, CardContent } from "@/components/ui/card";
 import { FollowUpCalendar } from "./follow-up-calendar";
 
 export default async function DashboardPage() {
@@ -43,12 +44,14 @@ export default async function DashboardPage() {
   return (
     <div>
       <h1 className="text-2xl font-semibold tracking-tight mb-8">Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
         {cards.map((card) => (
-          <div key={card.label} className="border rounded-lg p-6 bg-card">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">{card.label}</p>
-            <p className="text-4xl font-semibold tracking-tight mt-2">{card.value}</p>
-          </div>
+          <Card key={card.label}>
+            <CardContent>
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">{card.label}</p>
+              <p className="text-4xl font-semibold tracking-tight mt-2">{card.value}</p>
+            </CardContent>
+          </Card>
         ))}
       </div>
       <FollowUpCalendar followUps={followUps} />

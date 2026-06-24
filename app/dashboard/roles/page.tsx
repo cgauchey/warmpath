@@ -3,6 +3,7 @@ import { Role } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { StatusBadge, getStageColor } from "@/components/status-badge";
 
 const stages = [
   { value: "researching", label: "Researching" },
@@ -53,10 +54,10 @@ export default async function RolesPage({ searchParams }: { searchParams: Promis
       <div className="mb-6 flex flex-wrap gap-1.5">
           <Link
             href={{ pathname: "/dashboard/roles", query: q ? { q } : undefined }}
-            className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
+            className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors ${
               !stage
-                ? "bg-foreground text-background border-foreground"
-                : "border-input text-muted-foreground hover:text-foreground hover:border-foreground"
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted"
             }`}
           >
             All
@@ -65,10 +66,10 @@ export default async function RolesPage({ searchParams }: { searchParams: Promis
             <Link
               key={s.value}
               href={{ pathname: "/dashboard/roles", query: { ...(q ? { q } : {}), stage: s.value } }}
-              className={`text-xs px-2.5 py-1 rounded-full border transition-colors capitalize ${
+              className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors ${
                 stage === s.value
-                  ? "bg-foreground text-background border-foreground"
-                  : "border-input text-muted-foreground hover:text-foreground hover:border-foreground"
+                  ? getStageColor(s.value, "role")
+                  : "text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted"
               }`}
             >
               {s.label}
@@ -93,7 +94,7 @@ export default async function RolesPage({ searchParams }: { searchParams: Promis
               <p className="font-medium">{r.title}</p>
               <p className="text-sm text-muted-foreground mt-0.5">{r.companies?.name}</p>
             </div>
-            <span className="text-xs text-muted-foreground mt-1">{r.stage?.replace(/_/g, " ")}</span>
+            <StatusBadge stage={r.stage} type="role" />
           </Link>
         ))}
       </div>

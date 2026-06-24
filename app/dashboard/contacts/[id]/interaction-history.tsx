@@ -18,7 +18,7 @@ export function InteractionHistory({ interactions, contactId }: { interactions: 
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">History</h2>
+        <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">History</h2>
         {interactions.length > 0 && (
           <button
             onClick={() => setAscending(!ascending)}

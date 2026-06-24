@@ -26,7 +26,7 @@ export default function NewContactPage() {
 
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="relationship">Relationship</Label>
-          <select id="relationship" name="relationship" className="w-full border border-input rounded-md h-9 px-3 text-sm bg-transparent">
+          <select id="relationship" name="relationship" className="w-full border border-input rounded-lg h-9 px-3 text-sm bg-transparent text-foreground transition-colors focus:border-ring focus:ring-3 focus:ring-ring/50 focus:outline-none">
             <option value="">--</option>
             <option value="warm">Warm</option>
             <option value="cold">Cold</option>

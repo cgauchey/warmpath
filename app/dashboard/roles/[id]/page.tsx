@@ -28,14 +28,17 @@ export default async function RoleDetailPage({ params }: { params: Promise<{ id:
           href={role.source_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block text-sm underline underline-offset-4 text-muted-foreground hover:text-foreground transition-colors mb-6"
+          className="inline-block text-sm underline underline-offset-4 text-muted-foreground hover:text-foreground transition-colors mb-8"
         >
           View job posting
         </a>
       )}
 
       {role.job_description && (
-        <p className="text-sm whitespace-pre-wrap text-muted-foreground">{role.job_description}</p>
+        <div>
+          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Description</h2>
+          <p className="text-sm whitespace-pre-wrap text-muted-foreground leading-relaxed">{role.job_description}</p>
+        </div>
       )}
     </div>
   );
