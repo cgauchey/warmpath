@@ -17,7 +17,7 @@ export default function NewRolePage() {
   const [title, setTitle] = useState("");
   const [company, setCompany] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
-  const [stage, setStage] = useState("researching");
+  const [stage, setStage] = useState("applied");
   const [jobDescription, setJobDescription] = useState("");
 
   async function handleImport() {
@@ -130,7 +130,7 @@ export default function NewRolePage() {
             name="stage"
             value={stage}
             onChange={(e) => setStage(e.target.value)}
-            className="w-full border border-input rounded-md h-9 px-3 text-sm bg-transparent"
+            className="w-full border border-input rounded-lg h-9 px-3 text-sm bg-transparent text-foreground transition-colors focus:border-ring focus:ring-3 focus:ring-ring/50 focus:outline-none"
           >
             <option value="researching">Researching</option>
             <option value="applied">Applied</option>
