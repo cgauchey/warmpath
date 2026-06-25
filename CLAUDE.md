@@ -29,7 +29,7 @@ Support light and dark mode through the token variables from the start.
 Import from `@/lib/supabase/server`. The function is async:
 
 ```ts
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from '@/lib/supabase/server';
 
 const supabase = await createClient();
 ```
@@ -39,27 +39,14 @@ const supabase = await createClient();
 Every server action and API route must verify the user before doing anything:
 
 ```ts
-const { data: { user } } = await supabase.auth.getUser();
-if (!user) redirect("/login"); // in form actions
-if (!user) return;             // in void actions
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+if (!user) redirect('/login'); // in form actions
+if (!user) return; // in void actions
 ```
 
 All database queries must scope to the authenticated user with `.eq("user_id", user.id)`.
-
-### Anthropic / Claude client
-
-Not yet installed. When added, install `@anthropic-ai/sdk` and create the client with:
-
-```ts
-import Anthropic from "@anthropic-ai/sdk";
-const anthropic = new Anthropic(); // reads ANTHROPIC_API_KEY from env
-```
-
-No model constant exists yet. Define one in `lib/constants.ts` when needed:
-
-```ts
-export const CLAUDE_MODEL = "claude-sonnet-4-20250514";
-```
 
 ### Response shapes
 
@@ -68,8 +55,8 @@ export const CLAUDE_MODEL = "claude-sonnet-4-20250514";
 ```ts
 // Form actions: throw on error, revalidate + redirect on success
 if (error) throw error;
-revalidatePath("/dashboard/roles");
-redirect("/dashboard/roles");
+revalidatePath('/dashboard/roles');
+redirect('/dashboard/roles');
 
 // Void actions: silent return on auth failure, throw on DB error
 if (!user) return;
@@ -84,7 +71,7 @@ revalidatePath(`/dashboard/contacts/${contactId}`);
 return { data: { title, company, job_description } };
 
 // Error
-return { error: "Could not fetch page (404)" };
+return { error: 'Could not fetch page (404)' };
 ```
 
 **API routes** should follow the same `{ data, error }` shape with `NextResponse.json()`:
@@ -94,5 +81,5 @@ return { error: "Could not fetch page (404)" };
 return NextResponse.json({ data: result });
 
 // Error
-return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
 ```

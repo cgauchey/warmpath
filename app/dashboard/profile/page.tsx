@@ -1,0 +1,100 @@
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { saveProfile, type ResumeEntry } from "./actions";
+import { ResumeManager } from "./resume-manager";
+import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+
+export default async function ProfilePage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: profile } = await supabase
+    .from("user_profile")
+    .select(
+      "resume_text, background_notes, values_motivations, career_narrative, writing_samples"
+    )
+    .eq("user_id", user.id)
+    .single();
+
+  const resumes: ResumeEntry[] =
+    (profile?.resume_text as ResumeEntry[] | null) ?? [];
+
+  const fields = [
+    {
+      name: "background_notes",
+      label: "Background notes",
+      placeholder:
+        "Anything else about your background — education, projects, skills",
+      value: profile?.background_notes ?? "",
+    },
+    {
+      name: "values_motivations",
+      label: "Values & motivations",
+      placeholder:
+        "What matters to you in a role? What kind of work energizes you?",
+      value: profile?.values_motivations ?? "",
+    },
+    {
+      name: "career_narrative",
+      label: "Career narrative",
+      placeholder:
+        "How do you describe your career arc? What's the thread that connects your experience?",
+      value: profile?.career_narrative ?? "",
+    },
+    {
+      name: "writing_samples",
+      label: "Writing samples",
+      placeholder:
+        "Paste examples of your writing style — cover letter excerpts, emails, etc.",
+      value: profile?.writing_samples ?? "",
+    },
+  ];
+
+  return (
+    <div>
+      <h1 className="text-2xl font-semibold tracking-tight mb-8">Profile</h1>
+
+      <div className="max-w-xl flex flex-col gap-8">
+        <section>
+          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-4">
+            Resumes
+          </h2>
+          <ResumeManager resumes={resumes} />
+        </section>
+
+        <form action={saveProfile} className="flex flex-col gap-5">
+          {fields.map((field) => (
+            <Card key={field.name}>
+              <CardContent>
+                <Label
+                  htmlFor={field.name}
+                  className="text-xs uppercase tracking-wide text-muted-foreground"
+                >
+                  {field.label}
+                </Label>
+                <Textarea
+                  id={field.name}
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  defaultValue={field.value}
+                  rows={5}
+                  className="mt-2"
+                />
+              </CardContent>
+            </Card>
+          ))}
+
+          <Button type="submit" className="self-start">
+            Save profile
+          </Button>
+        </form>
+      </div>
+    </div>
+  );
+}

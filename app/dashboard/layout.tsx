@@ -15,6 +15,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Link href="/dashboard/roles" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Roles
             </Link>
+            <Link href="/dashboard/profile" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Profile
+            </Link>
           </div>
         </div>
       </nav>
