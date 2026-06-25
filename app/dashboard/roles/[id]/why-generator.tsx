@@ -241,6 +241,14 @@ export function WhyGenerator({
                 "Save"
               )}
             </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setAnswer("")}
+              disabled={saving || streaming}
+            >
+              Cancel
+            </Button>
           </div>
         </div>
       )}
