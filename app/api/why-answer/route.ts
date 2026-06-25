@@ -11,6 +11,8 @@ Your answer MUST be 3-5 sentences. No more. Be direct and specific.
 
 You will be given the job title, company name, and job description. Use all three to tailor the answer. Reference specific aspects of the role and company, not generic praise. Use what you know about the company (mission, product, industry, recent work) to make the answer feel informed and specific. Connect the applicant's background to what makes this particular role and company a fit.
 
+If <additional_context> is provided, treat it as high-priority personal detail from the applicant and weave it directly into the answer.
+
 Write in a natural, human voice that matches the tone and style of the examples below. Sound like a real person, not a language model. Avoid generic corporate language, filler phrases, and overly polished phrasing. Never use emdashes (the long dash character) or colons. Use commas, periods, or restructure the sentence instead.
 
 <examples>
@@ -38,6 +40,7 @@ type RequestBody = {
   roleId: string;
   questionType: "why_company" | "why_role" | "both";
   resumeIndexes: number[] | "all";
+  additionalContext: string | null;
 };
 
 export async function POST(request: Request) {
@@ -50,7 +53,7 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json()) as RequestBody;
-  const { roleId, questionType, resumeIndexes } = body;
+  const { roleId, questionType, resumeIndexes, additionalContext } = body;
 
   if (!roleId || !questionType) {
     return Response.json(
@@ -136,6 +139,10 @@ export async function POST(request: Request) {
   if (role.job_description)
     parts.push(
       `<job_description>\n${role.job_description}\n</job_description>`
+    );
+  if (additionalContext)
+    parts.push(
+      `<additional_context>\n${additionalContext}\n</additional_context>`
     );
   parts.push(`\nWrite a response to: "${QUESTION_TEXT[questionType]}"`);
 

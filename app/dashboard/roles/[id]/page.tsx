@@ -61,7 +61,7 @@ export default async function RoleDetailPage({ params }: { params: Promise<{ id:
         <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-4">
           Prep
         </h2>
-        <WhyGenerator roleId={id} sourceUrl={role.source_url} resumes={resumes} />
+        <WhyGenerator roleId={id} sourceUrl={role.source_url} resumes={resumes} generationNotes={role.generation_notes} />
       </section>
 
       {answers.length > 0 && (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { saveWhyAnswer, extractVoiceInsights } from "./actions";
+import { saveWhyAnswer, extractVoiceInsights, updateGenerationNotes } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -13,20 +13,22 @@ export function WhyGenerator({
   roleId,
   sourceUrl,
   resumes,
+  generationNotes,
 }: {
   roleId: string;
   sourceUrl: string | null;
   resumes: Resume[];
+  generationNotes: string | null;
 }) {
   const [questionType, setQuestionType] = useState("why_role");
   const [selectedResumes, setSelectedResumes] = useState<number[] | "all">(
     "all"
   );
+  const [notes, setNotes] = useState(generationNotes ?? "");
   const [answer, setAnswer] = useState("");
   const [generatedText, setGeneratedText] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
 
   function toggleResume(index: number) {
@@ -61,8 +63,8 @@ export function WhyGenerator({
     setError("");
     setAnswer("");
     setGeneratedText("");
-    setSaved(false);
     setStreaming(true);
+    updateGenerationNotes(roleId, notes.trim() || null).catch(() => {});
 
     try {
       const res = await fetch("/api/why-answer", {
@@ -72,6 +74,7 @@ export function WhyGenerator({
           roleId,
           questionType,
           resumeIndexes: selectedResumes,
+          additionalContext: notes.trim() || null,
         }),
       });
 
@@ -135,7 +138,7 @@ export function WhyGenerator({
       extractVoiceInsights(generatedText, final).catch(() => {});
     }
     setSaving(false);
-    setSaved(true);
+    setAnswer("");
   }
 
   return (
@@ -185,6 +188,18 @@ export function WhyGenerator({
         </div>
       )}
 
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="generation_notes">Anything else to include?</Label>
+        <Textarea
+          id="generation_notes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="e.g. I spoke with someone on the team, I love their recent product launch, I'm particularly drawn to their approach to X…"
+          rows={3}
+          disabled={streaming}
+        />
+      </div>
+
       <Button
         size="sm"
         className="self-start"
@@ -207,10 +222,7 @@ export function WhyGenerator({
         <div className="flex flex-col gap-3">
           <Textarea
             value={answer}
-            onChange={(e) => {
-              setAnswer(e.target.value);
-              setSaved(false);
-            }}
+            onChange={(e) => setAnswer(e.target.value)}
             rows={10}
             disabled={streaming}
           />
@@ -229,9 +241,6 @@ export function WhyGenerator({
                 "Save"
               )}
             </Button>
-            {saved && (
-              <p className="text-sm text-muted-foreground">Saved</p>
-            )}
           </div>
         </div>
       )}

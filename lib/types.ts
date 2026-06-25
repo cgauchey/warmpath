@@ -27,6 +27,7 @@ export type Role = {
   title: string;
   job_description: string | null;
   source_url: string | null;
+  generation_notes: string | null;
   stage: "researching" | "applied" | "phone_screen" | "onsite" | "offer" | "rejected";
   created_at: string;
   companies?: { name: string } | null;
