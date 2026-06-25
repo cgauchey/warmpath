@@ -11,7 +11,7 @@ Your answer MUST be 3-5 sentences. No more. Be direct and specific.
 
 You will be given the job title, company name, and job description. Use all three to tailor the answer. Reference specific aspects of the role and company, not generic praise. Use what you know about the company (mission, product, industry, recent work) to make the answer feel informed and specific. Connect the applicant's background to what makes this particular role and company a fit.
 
-Write in a natural, human voice that matches the tone and style of the examples below. Sound like a real person, not a language model. Avoid generic corporate language, filler phrases, and overly polished phrasing. Never use emdashes (the long dash character). Use commas, periods, or restructure the sentence instead.
+Write in a natural, human voice that matches the tone and style of the examples below. Sound like a real person, not a language model. Avoid generic corporate language, filler phrases, and overly polished phrasing. Never use emdashes (the long dash character) or colons. Use commas, periods, or restructure the sentence instead.
 
 <examples>
 Q: Why are you a good fit for Chief of Staff to CEO and President at Orca Bio?
@@ -21,7 +21,7 @@ Q: Why do you want to work at Palantir?
 A: What draws me to Palantir is the opportunity to work on hard, real-world problems while staying close to the people you're building for. I've realized over the course of my career that I'm most energized when I'm working directly with users, figuring out what's actually broken, and building solutions that have a clear impact. At JPMorgan, some of my favorite projects were the ones where I got to bridge the gap between technical implementation and business needs, and that's something I've continued to seek out through my master's in machine learning and my work in venture. The FDSE role stands out because it combines technical problem-solving with ownership, customer interaction, and a lot of ambiguity, which are all things I genuinely enjoy.
 
 Q: Why are you interested in Goodfire?
-A: What draws me to Goodfire is that you're tackling a problem that feels foundational to the future of AI. As models become more capable, understanding what's happening inside them becomes increasingly important, and I think interpretability is one of the most interesting areas in the field right now.
+A: What interests me about Goodfire is that you're tackling a problem that feels foundational to the future of AI. As models become more capable, understanding what's happening inside them becomes increasingly important, and I think interpretability is one of the most interesting areas in the field right now.
 
 My background has been somewhat unconventional. I studied psychology and economics at Barnard, later worked as a software engineer at JPMorgan, and then completed my MS in Computer Science at Columbia. A common thread across those experiences has been trying to understand how complex systems work, whether that's human behavior, organizations, or machine learning models. Goodfire's mission resonates with me because it's focused on making these systems more understandable rather than simply building on top of them.
 
@@ -59,21 +59,28 @@ export async function POST(request: Request) {
     );
   }
 
-  const [{ data: profile }, { data: role }] = await Promise.all([
-    supabase
-      .from("user_profile")
-      .select(
-        "resume_text, background_notes, values_motivations, career_narrative, writing_samples"
-      )
-      .eq("user_id", user.id)
-      .single(),
-    supabase
-      .from("roles")
-      .select("title, job_description, source_url, companies(name)")
-      .eq("id", roleId)
-      .eq("user_id", user.id)
-      .single(),
-  ]);
+  const [{ data: profile }, { data: role }, { data: recentAnswers }] =
+    await Promise.all([
+      supabase
+        .from("user_profile")
+        .select(
+          "resume_text, background_notes, values_motivations, career_narrative, writing_samples, voice_profile"
+        )
+        .eq("user_id", user.id)
+        .single(),
+      supabase
+        .from("roles")
+        .select("title, job_description, source_url, companies(name)")
+        .eq("id", roleId)
+        .eq("user_id", user.id)
+        .single(),
+      supabase
+        .from("why_answers")
+        .select("answer_text, question_type")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(3),
+    ]);
 
   if (!profile) {
     return Response.json(
@@ -101,6 +108,19 @@ export async function POST(request: Request) {
     .join("\n\n---\n\n");
 
   const parts: string[] = [];
+
+  if ((profile as any).voice_profile)
+    parts.push(
+      `<voice_profile>\n${(profile as any).voice_profile}\n</voice_profile>`
+    );
+
+  if (recentAnswers && recentAnswers.length > 0) {
+    const exampleLines = recentAnswers
+      .map((a) => `[${QUESTION_TEXT[a.question_type] ?? a.question_type}]\n${a.answer_text}`)
+      .join("\n\n---\n\n");
+    parts.push(`<your_writing_examples>\n${exampleLines}\n</your_writing_examples>`);
+  }
+
   if (resumeText) parts.push(`<resume>\n${resumeText}\n</resume>`);
   if (profile.background_notes)
     parts.push(`<background>\n${profile.background_notes}\n</background>`);

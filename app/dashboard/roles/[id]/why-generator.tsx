@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { saveWhyAnswer } from "./actions";
+import { saveWhyAnswer, extractVoiceInsights } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,7 @@ export function WhyGenerator({
     "all"
   );
   const [answer, setAnswer] = useState("");
+  const [generatedText, setGeneratedText] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -59,6 +60,7 @@ export function WhyGenerator({
   async function handleGenerate() {
     setError("");
     setAnswer("");
+    setGeneratedText("");
     setSaved(false);
     setStreaming(true);
 
@@ -115,6 +117,8 @@ export function WhyGenerator({
           }
         }
       }
+
+      setGeneratedText(accumulated);
     } catch {
       setError("Failed to generate answer");
     }
@@ -125,7 +129,11 @@ export function WhyGenerator({
   async function handleSave() {
     if (!answer.trim()) return;
     setSaving(true);
-    await saveWhyAnswer(roleId, questionType, answer.trim(), sourceUrl);
+    const final = answer.trim();
+    await saveWhyAnswer(roleId, questionType, final, sourceUrl, generatedText);
+    if (final !== generatedText) {
+      extractVoiceInsights(generatedText, final).catch(() => {});
+    }
     setSaving(false);
     setSaved(true);
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateWhyAnswer } from "./actions";
+import { updateWhyAnswer, extractVoiceInsights } from "./actions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -36,10 +36,14 @@ export function SavedAnswers({
     setEditText(answer.answer_text);
   }
 
-  async function handleSave(answerId: string) {
+  async function handleSave(answer: SavedAnswer) {
     if (!editText.trim()) return;
     setSaving(true);
-    await updateWhyAnswer(answerId, roleId, editText.trim());
+    const final = editText.trim();
+    await updateWhyAnswer(answer.id, roleId, final);
+    if (final !== answer.answer_text) {
+      extractVoiceInsights(answer.answer_text, final).catch(() => {});
+    }
     setSaving(false);
     setEditingId(null);
   }
@@ -80,7 +84,7 @@ export function SavedAnswers({
                 <div className="flex gap-2">
                   <Button
                     size="sm"
-                    onClick={() => handleSave(answer.id)}
+                    onClick={() => handleSave(answer)}
                     disabled={saving}
                   >
                     {saving ? (
