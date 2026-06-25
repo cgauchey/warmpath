@@ -17,6 +17,52 @@ export async function updateRoleStage(roleId: string, stage: string) {
   revalidatePath(`/dashboard/roles/${roleId}`);
 }
 
+export async function saveWhyAnswer(
+  roleId: string,
+  questionType: string,
+  answerText: string,
+  roleUrl: string | null
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { error } = await supabase.from("why_answers").insert({
+    user_id: user.id,
+    role_id: roleId,
+    question_type: questionType,
+    answer_text: answerText,
+    role_url: roleUrl,
+    prompt_version: "v1",
+  });
+
+  if (error) throw error;
+  revalidatePath(`/dashboard/roles/${roleId}`);
+}
+
+export async function updateWhyAnswer(
+  answerId: string,
+  roleId: string,
+  answerText: string
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from("why_answers")
+    .update({ answer_text: answerText })
+    .eq("id", answerId)
+    .eq("user_id", user.id);
+
+  if (error) throw error;
+  revalidatePath(`/dashboard/roles/${roleId}`);
+}
+
 export async function addInteraction(roleId: string, formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

@@ -36,7 +36,20 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
         <p className="text-sm text-muted-foreground mt-1">
           {contact.role_title}{contact.companies?.name && ` · ${contact.companies.name}`}
         </p>
+        {contact.relationship && (
+          <p className="text-sm text-muted-foreground mt-1">{contact.relationship}</p>
+        )}
         <StageSelect contactId={id} currentStage={contact.stage} />
+        {contact.linkedin_url && (
+          <a
+            href={contact.linkedin_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors mt-2 inline-block"
+          >
+            LinkedIn
+          </a>
+        )}
       </div>
 
       {contact.notes && (
