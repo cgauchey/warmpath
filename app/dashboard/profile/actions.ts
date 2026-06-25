@@ -12,6 +12,8 @@ export async function saveProfile(formData: FormData) {
 
   const profile = {
     user_id: user.id,
+    linkedin_url: (formData.get("linkedin_url") as string) || null,
+    github_url: (formData.get("github_url") as string) || null,
     background_notes: (formData.get("background_notes") as string) || null,
     values_motivations:
       (formData.get("values_motivations") as string) || null,

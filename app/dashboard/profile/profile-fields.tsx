@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { saveProfile } from "./actions";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,7 @@ type Field = {
   label: string;
   placeholder: string;
   value: string;
+  inputType?: "url";
 };
 
 export function ProfileFields({ fields }: { fields: Field[] }) {
@@ -34,7 +36,18 @@ export function ProfileFields({ fields }: { fields: Field[] }) {
                   {field.label}
                 </p>
                 {field.value ? (
-                  <p className="text-sm whitespace-pre-wrap">{field.value}</p>
+                  field.inputType === "url" ? (
+                    <a
+                      href={field.value}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors"
+                    >
+                      {field.value}
+                    </a>
+                  ) : (
+                    <p className="text-sm whitespace-pre-wrap">{field.value}</p>
+                  )
                 ) : (
                   <p className="text-sm text-muted-foreground italic">
                     Not filled in
@@ -72,14 +85,25 @@ export function ProfileFields({ fields }: { fields: Field[] }) {
             >
               {field.label}
             </Label>
-            <Textarea
-              id={field.name}
-              name={field.name}
-              placeholder={field.placeholder}
-              defaultValue={field.value}
-              rows={5}
-              className="mt-2"
-            />
+            {field.inputType === "url" ? (
+              <Input
+                id={field.name}
+                name={field.name}
+                type="url"
+                placeholder={field.placeholder}
+                defaultValue={field.value}
+                className="mt-2"
+              />
+            ) : (
+              <Textarea
+                id={field.name}
+                name={field.name}
+                placeholder={field.placeholder}
+                defaultValue={field.value}
+                rows={5}
+                className="mt-2"
+              />
+            )}
           </CardContent>
         </Card>
       ))}

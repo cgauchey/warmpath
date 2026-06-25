@@ -14,7 +14,7 @@ export default async function ProfilePage() {
   const { data: profile } = await supabase
     .from("user_profile")
     .select(
-      "resume_text, background_notes, values_motivations, career_narrative, writing_samples"
+      "resume_text, background_notes, values_motivations, career_narrative, writing_samples, linkedin_url, github_url"
     )
     .eq("user_id", user.id)
     .single();
@@ -23,6 +23,20 @@ export default async function ProfilePage() {
     (profile?.resume_text as ResumeEntry[] | null) ?? [];
 
   const fields = [
+    {
+      name: "linkedin_url",
+      label: "LinkedIn",
+      placeholder: "https://linkedin.com/in/yourname",
+      value: profile?.linkedin_url ?? "",
+      inputType: "url" as const,
+    },
+    {
+      name: "github_url",
+      label: "GitHub",
+      placeholder: "https://github.com/yourname",
+      value: profile?.github_url ?? "",
+      inputType: "url" as const,
+    },
     {
       name: "background_notes",
       label: "Background notes",
