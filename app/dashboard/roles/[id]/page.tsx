@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { StageSelect } from "./stage-select";
 import { WhyGenerator } from "./why-generator";
 import { SavedAnswers } from "./saved-answers";
+import { CollapsibleDescription } from "./collapsible-description";
 
 export default async function RoleDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -53,7 +54,7 @@ export default async function RoleDetailPage({ params }: { params: Promise<{ id:
       {role.job_description && (
         <div className="mb-10">
           <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Description</h2>
-          <p className="text-sm whitespace-pre-wrap text-muted-foreground leading-relaxed">{role.job_description}</p>
+          <CollapsibleDescription text={role.job_description} />
         </div>
       )}
 
