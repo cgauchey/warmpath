@@ -1,11 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { saveProfile, type ResumeEntry } from "./actions";
+import { type ResumeEntry } from "./actions";
 import { ResumeManager } from "./resume-manager";
-import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { ProfileFields } from "./profile-fields";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -68,32 +65,12 @@ export default async function ProfilePage() {
           <ResumeManager resumes={resumes} />
         </section>
 
-        <form action={saveProfile} className="flex flex-col gap-5">
-          {fields.map((field) => (
-            <Card key={field.name}>
-              <CardContent>
-                <Label
-                  htmlFor={field.name}
-                  className="text-xs uppercase tracking-wide text-muted-foreground"
-                >
-                  {field.label}
-                </Label>
-                <Textarea
-                  id={field.name}
-                  name={field.name}
-                  placeholder={field.placeholder}
-                  defaultValue={field.value}
-                  rows={5}
-                  className="mt-2"
-                />
-              </CardContent>
-            </Card>
-          ))}
-
-          <Button type="submit" className="self-start">
-            Save profile
-          </Button>
-        </form>
+        <section>
+          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-4">
+            Details
+          </h2>
+          <ProfileFields fields={fields} />
+        </section>
       </div>
     </div>
   );
