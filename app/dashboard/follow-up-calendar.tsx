@@ -53,7 +53,7 @@ export function FollowUpCalendar({ followUps }: { followUps: FollowUp[] }) {
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
   return (
-    <Card>
+    <Card className="overflow-visible">
       <CardContent>
         <div className="flex items-center justify-between mb-4">
           <button onClick={prev} className="text-sm text-muted-foreground hover:text-foreground transition-colors px-2">←</button>
