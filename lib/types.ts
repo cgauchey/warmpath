@@ -2,6 +2,11 @@ export type Company = {
   id: string;
   user_id: string;
   name: string;
+  website: string | null;
+  description: string | null;
+  linkedin_url: string | null;
+  industry: string | null;
+  size: string | null;
   notes: string | null;
   created_at: string;
 };

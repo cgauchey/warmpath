@@ -11,10 +11,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Link>
           <div className="flex gap-2">
             <PillButton variant="outlined" color="white" size="sm" asChild>
-              <Link href="/dashboard/contacts">contacts</Link>
+              <Link href="/dashboard/roles">roles</Link>
             </PillButton>
             <PillButton variant="outlined" color="white" size="sm" asChild>
-              <Link href="/dashboard/roles">roles</Link>
+              <Link href="/dashboard/companies">companies</Link>
+            </PillButton>
+            <PillButton variant="outlined" color="white" size="sm" asChild>
+              <Link href="/dashboard/contacts">contacts</Link>
             </PillButton>
             <PillButton variant="outlined" color="white" size="sm" asChild>
               <Link href="/dashboard/profile">profile</Link>
