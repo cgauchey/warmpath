@@ -35,7 +35,7 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="bg-brand-base -mx-6 -my-10 px-6 py-12 min-h-[calc(100vh-4rem)]">
-      <div className="max-w-xl">
+      <div>
         <div className="mb-8">
           <h1 className="text-3xl font-black text-white tracking-tight leading-tight">{contact.name}</h1>
           <p className="text-white/50 font-medium mt-1">
@@ -50,7 +50,7 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
               href={contact.linkedin_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-bold text-white/40 underline underline-offset-4 hover:text-white transition-colors mt-3 inline-block"
+              className="text-sm font-bold text-white/40 underline underline-offset-4 hover:text-white transition-colors mt-3 block"
             >
               LinkedIn ↗
             </a>

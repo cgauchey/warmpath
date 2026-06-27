@@ -71,7 +71,7 @@ export default async function ProfilePage() {
     <div className="bg-brand-base -mx-6 -my-10 px-6 py-12 min-h-[calc(100vh-4rem)]">
       <h1 className="text-4xl font-black text-white tracking-tight mb-8">profile</h1>
 
-      <div className="max-w-xl flex flex-col gap-10">
+      <div className="flex flex-col gap-10">
         <section>
           <h2 className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">Resumes</h2>
           <ResumeManager resumes={resumes} />
