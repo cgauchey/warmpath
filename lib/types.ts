@@ -44,3 +44,12 @@ export type Interaction = {
   follow_up_date: string | null;
   created_at: string;
 };
+
+export type ContactResult = {
+  contact_id: string;
+  name: string;
+  role_title: string | null;
+  company_name: string | null;
+  angle: string;
+  tier: 1 | 2 | 3;
+};

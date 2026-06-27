@@ -1,16 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
-import { Role } from "@/lib/types";
+import { Role, ContactResult } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { StageSelect } from "./stage-select";
 import { WhyGenerator } from "./why-generator";
 import { SavedAnswers } from "./saved-answers";
 import { CollapsibleDescription } from "./collapsible-description";
+import { FindContacts } from "./find-contacts";
 
 export default async function RoleDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: role }, { data: profile }, { data: savedAnswers }] = await Promise.all([
+  const [{ data: role }, { data: profile }, { data: savedAnswers }, { data: savedConnections }] = await Promise.all([
     supabase
       .from("roles")
       .select("*, companies(name)")
@@ -25,12 +26,27 @@ export default async function RoleDetailPage({ params }: { params: Promise<{ id:
       .select("id, question_type, answer_text, created_at")
       .eq("role_id", id)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("contact_role_connections")
+      .select("contact_id, angle, tier, contacts(id, name, role_title, companies(name))")
+      .eq("role_id", id)
+      .order("tier", { ascending: true }),
   ]);
 
   if (!role) notFound();
 
   const resumes = (profile?.resume_text as { label: string; text: string; created_at: string }[] | null) ?? [];
   const answers = savedAnswers ?? [];
+  const companyName = role.companies?.name ?? null;
+
+  const connections: ContactResult[] = (savedConnections ?? []).map((c: any) => ({
+    contact_id: c.contact_id,
+    name: c.contacts?.name ?? "Unknown",
+    role_title: c.contacts?.role_title ?? null,
+    company_name: c.contacts?.companies?.name ?? null,
+    angle: c.angle,
+    tier: c.tier as 1 | 2 | 3,
+  }));
 
   return (
     <div className="max-w-xl">
@@ -72,6 +88,14 @@ export default async function RoleDetailPage({ params }: { params: Promise<{ id:
           </h2>
           <SavedAnswers answers={answers} roleId={id} />
         </section>
+      )}
+
+      {companyName && (
+        <FindContacts
+          roleId={id}
+          companyName={companyName}
+          savedConnections={connections}
+        />
       )}
     </div>
   );

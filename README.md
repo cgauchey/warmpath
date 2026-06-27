@@ -9,6 +9,7 @@ A job search CRM for tracking roles, contacts, and networking activity. Built wi
 - **Profile** -- Store multiple resume versions (upload PDF/DOCX/TXT or paste text), background notes, career narrative, values, and writing samples.
 - **Why Answer Generator** -- AI-powered answer generation for "Why this role?" / "Why this company?" questions. Streams responses from Claude, lets you edit before saving, and stores answers for reuse. Supports an additional context field for role-specific details (a conversation you had, something that excites you about the company) that get woven directly into the answer. Learns your writing voice over time: each time you edit a generated answer before saving, the system diffs the original and your version, extracts style preferences (tone, sentence length, vocabulary, structure), and updates a voice profile stored on your account. Future generations incorporate that profile alongside examples of your past answers, so the output gets closer to your natural voice with each use.
 - **Follow-up Calendar** -- Dashboard view of upcoming follow-ups across contacts and roles.
+- **Find Contacts Who Can Help** -- On any role page, surfaces contacts from your network who could provide a referral or introduction at the target company. Searches directly for contacts who work there, and scans interaction history for anyone you've discussed the company with. Claude generates a one-line angle for each result explaining how to approach them. Results are saved and also visible on each contact's page under "Can help with."
 
 ## Tech Stack
 

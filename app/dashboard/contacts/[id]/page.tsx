@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { Contact, Interaction } from "@/lib/types";
+import Link from "next/link";
 import { addInteraction } from "./actions";
 import { InteractionHistory } from "./interaction-history";
 import { StageSelect } from "./stage-select";
@@ -22,12 +23,19 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
 
   if (!contact) notFound();
 
-  const { data: interactions } = await supabase
-    .from("interactions")
-    .select("*")
-    .eq("contact_id", id)
-    .order("interaction_date", { ascending: false, nullsFirst: false })
-    .returns<Interaction[]>();
+  const [{ data: interactions }, { data: roleConnections }] = await Promise.all([
+    supabase
+      .from("interactions")
+      .select("*")
+      .eq("contact_id", id)
+      .order("interaction_date", { ascending: false, nullsFirst: false })
+      .returns<Interaction[]>(),
+    supabase
+      .from("contact_role_connections")
+      .select("id, angle, tier, roles(id, title, companies(name))")
+      .eq("contact_id", id)
+      .order("tier", { ascending: true }),
+  ]);
 
   return (
     <div className="max-w-xl">
@@ -92,6 +100,29 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
       </section>
 
       <InteractionHistory interactions={interactions ?? []} contactId={id} />
+
+      {roleConnections && roleConnections.length > 0 && (
+        <section className="mt-12">
+          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-4">
+            Can help with
+          </h2>
+          <div className="flex flex-col divide-y">
+            {roleConnections.map((conn: any) => (
+              <Link
+                key={conn.id}
+                href={`/dashboard/roles/${conn.roles?.id}`}
+                className="py-4 -mx-3 px-3 rounded-lg hover:bg-muted/50 transition-colors"
+              >
+                <p className="font-medium text-sm">{conn.roles?.title}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {conn.roles?.companies?.name}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1.5">{conn.angle}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
