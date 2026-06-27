@@ -1,28 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
 export function CollapsibleDescription({ text }: { text: string }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
     <div>
-      <p
-        className={`text-sm whitespace-pre-wrap text-muted-foreground leading-relaxed ${
-          expanded ? "" : "line-clamp-4"
-        }`}
-      >
+      <p className={`text-sm whitespace-pre-wrap text-white/60 leading-relaxed ${expanded ? "" : "line-clamp-4"}`}>
         {text}
       </p>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="mt-1 h-auto px-0 text-muted-foreground hover:text-foreground hover:bg-transparent"
+      <button
         onClick={() => setExpanded(!expanded)}
+        className="mt-2 text-xs font-bold text-white/30 hover:text-white transition-colors lowercase"
       >
-        {expanded ? "Show less" : "Show more"}
-      </Button>
+        {expanded ? "show less" : "show more"}
+      </button>
     </div>
   );
 }

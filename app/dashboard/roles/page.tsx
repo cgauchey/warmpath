@@ -1,17 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { Role } from "@/lib/types";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { StatusBadge, getStageColor } from "@/components/status-badge";
+import { PillButton } from "@/components/brand/pill-button";
+import { StatusBadge, stageToBrandColor } from "@/components/status-badge";
 
 const stages = [
-  { value: "researching", label: "Researching" },
-  { value: "applied", label: "Applied" },
-  { value: "phone_screen", label: "Phone screen" },
-  { value: "onsite", label: "Onsite" },
-  { value: "offer", label: "Offer" },
-  { value: "rejected", label: "Rejected" },
+  { value: "researching",  label: "researching" },
+  { value: "applied",      label: "applied" },
+  { value: "phone_screen", label: "phone screen" },
+  { value: "onsite",       label: "onsite" },
+  { value: "offer",        label: "offer" },
+  { value: "rejected",     label: "rejected" },
 ] as const;
 
 export default async function RolesPage({ searchParams }: { searchParams: Promise<{ q?: string; stage?: string }> }) {
@@ -39,60 +38,69 @@ export default async function RolesPage({ searchParams }: { searchParams: Promis
   });
 
   return (
-    <div>
+    <div className="bg-brand-base -mx-6 -my-10 px-6 py-12 min-h-[calc(100vh-4rem)]">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Roles</h1>
-        <Button asChild variant="outline" size="sm">
-          <Link href="/dashboard/roles/new">Add role</Link>
-        </Button>
+        <h1 className="text-4xl font-black text-white lowercase tracking-tight">roles</h1>
+        <PillButton color="orange" size="sm" asChild>
+          <Link href="/dashboard/roles/new">add role</Link>
+        </PillButton>
       </div>
 
       <form className="mb-6">
-        <Input type="search" name="q" placeholder="Search roles" defaultValue={q ?? ""} />
+        <input
+          type="search"
+          name="q"
+          placeholder="search roles"
+          defaultValue={q ?? ""}
+          className="w-full bg-brand-surface border border-white/10 text-white placeholder:text-white/30 rounded-full px-5 py-2.5 text-sm font-medium focus:outline-none focus:border-white/30 transition-colors"
+        />
       </form>
 
-      <div className="mb-6 flex flex-wrap gap-1.5">
-          <Link
-            href={{ pathname: "/dashboard/roles", query: q ? { q } : undefined }}
-            className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors ${
-              !stage
-                ? "bg-foreground text-background"
-                : "text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted"
-            }`}
-          >
-            All
+      <div className="mb-8 flex flex-wrap gap-2">
+        <PillButton
+          variant={!stage ? "filled" : "outlined"}
+          color="white"
+          size="sm"
+          asChild
+        >
+          <Link href={{ pathname: "/dashboard/roles", query: q ? { q } : undefined }}>
+            all
           </Link>
-          {stages.map((s) => (
-            <Link
+        </PillButton>
+        {stages.map((s) => {
+          const color = stageToBrandColor[s.value] ?? "white";
+          return (
+            <PillButton
               key={s.value}
-              href={{ pathname: "/dashboard/roles", query: { ...(q ? { q } : {}), stage: s.value } }}
-              className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors ${
-                stage === s.value
-                  ? getStageColor(s.value, "role")
-                  : "text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted"
-              }`}
+              variant={stage === s.value ? "filled" : "outlined"}
+              color={color}
+              size="sm"
+              asChild
             >
-              {s.label}
-            </Link>
-          ))}
+              <Link href={{ pathname: "/dashboard/roles", query: { ...(q ? { q } : {}), stage: s.value } }}>
+                {s.label}
+              </Link>
+            </PillButton>
+          );
+        })}
       </div>
 
       {!roles?.length && (
-        <p className="text-sm text-muted-foreground">
-          {q || stage ? "No roles found." : "No roles yet. Add your first one."}
+        <p className="text-sm text-white/40 font-medium">
+          {q || stage ? "no roles found." : "no roles yet. add your first one."}
         </p>
       )}
 
-      <div className="flex flex-col divide-y">
+      <div className="flex flex-col divide-y divide-white/10">
         {roles?.map((r) => (
           <Link
             key={r.id}
             href={`/dashboard/roles/${r.id}`}
-            className="py-4 flex justify-between items-start hover:bg-muted/50 -mx-3 px-3 rounded-lg transition-colors"
+            className="py-4 flex justify-between items-start hover:bg-white/5 -mx-3 px-3 rounded-lg transition-colors"
           >
             <div>
-              <p className="font-medium">{r.title}</p>
-              <p className="text-sm text-muted-foreground mt-0.5">{r.companies?.name}</p>
+              <p className="font-bold text-white">{r.title}</p>
+              <p className="text-sm text-white/50 mt-0.5">{r.companies?.name}</p>
             </div>
             <StatusBadge stage={r.stage} type="role" />
           </Link>

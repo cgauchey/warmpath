@@ -68,21 +68,17 @@ export default async function ProfilePage() {
   ];
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold tracking-tight mb-8">Profile</h1>
+    <div className="bg-brand-base -mx-6 -my-10 px-6 py-12 min-h-[calc(100vh-4rem)]">
+      <h1 className="text-4xl font-black text-white tracking-tight mb-8">profile</h1>
 
-      <div className="max-w-xl flex flex-col gap-8">
+      <div className="max-w-xl flex flex-col gap-10">
         <section>
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-4">
-            Resumes
-          </h2>
+          <h2 className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">Resumes</h2>
           <ResumeManager resumes={resumes} />
         </section>
 
         <section>
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-4">
-            Details
-          </h2>
+          <h2 className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">Details</h2>
           <ProfileFields fields={fields} />
         </section>
       </div>

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
-import { Card, CardContent } from "@/components/ui/card";
+import { StatCard } from "@/components/brand/stat-card";
 import { FollowUpCalendar } from "./follow-up-calendar";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -35,25 +36,18 @@ export default async function DashboardPage() {
     role_title: i.roles?.title ?? null,
   }));
 
-  const cards = [
-    { label: "Contacts", value: contactCount ?? 0 },
-    { label: "Roles", value: roleCount ?? 0 },
-    { label: "Follow-ups this week", value: followUpCount ?? 0 },
-  ];
-
   return (
-    <div>
-      <h1 className="text-2xl font-semibold tracking-tight mb-8">Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        {cards.map((card) => (
-          <Card key={card.label}>
-            <CardContent>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">{card.label}</p>
-              <p className="text-4xl font-semibold tracking-tight mt-2">{card.value}</p>
-            </CardContent>
-          </Card>
-        ))}
+    <div className="bg-brand-base -mx-6 -my-10 px-6 py-12 min-h-[calc(100vh-4rem)]">
+      <h1 className="text-4xl font-black text-white lowercase tracking-tight mb-10">
+        dashboard
+      </h1>
+
+      <div className="grid grid-cols-3 gap-4 mb-14">
+        <Link href="/dashboard/contacts"><StatCard label="contacts" value={contactCount ?? 0} color="orange" /></Link>
+        <Link href="/dashboard/roles"><StatCard label="roles" value={roleCount ?? 0} color="blue" /></Link>
+        <StatCard label="follow-ups this week" value={followUpCount ?? 0} color="yellow" />
       </div>
+
       <FollowUpCalendar followUps={followUps} />
     </div>
   );

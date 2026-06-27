@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import { saveProfile } from "./actions";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { PillButton } from "@/components/brand/pill-button";
 
 type Field = {
   name: string;
@@ -30,96 +26,87 @@ export function ProfileFields({ fields }: { fields: Field[] }) {
       <div className="flex flex-col gap-4">
         {hasContent ? (
           fields.map((field) => (
-            <Card key={field.name}>
-              <CardContent>
-                <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
-                  {field.label}
-                </p>
-                {field.value ? (
-                  field.inputType === "url" ? (
-                    <a
-                      href={field.value}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors"
-                    >
-                      {field.value}
-                    </a>
-                  ) : (
-                    <p className="text-sm whitespace-pre-wrap">{field.value}</p>
-                  )
+            <div key={field.name} className="bg-brand-surface rounded-2xl p-5">
+              <p className="text-xs font-black uppercase tracking-widest text-white/30 mb-2">
+                {field.label}
+              </p>
+              {field.value ? (
+                field.inputType === "url" ? (
+                  <a
+                    href={field.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-white/80 underline underline-offset-4 hover:text-white transition-colors"
+                  >
+                    {field.value}
+                  </a>
                 ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    Not filled in
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+                  <p className="text-sm text-white/70 whitespace-pre-wrap leading-relaxed">{field.value}</p>
+                )
+              ) : (
+                <p className="text-sm text-white/25 italic">not filled in</p>
+              )}
+            </div>
           ))
         ) : (
-          <p className="text-sm text-muted-foreground">
-            No details yet. Add information about your background to get
-            personalized answers.
+          <p className="text-sm text-white/40">
+            No details yet. Add information about your background to get personalized answers.
           </p>
         )}
-        <Button
-          variant="outline"
+        <PillButton
+          variant="outlined"
+          color="white"
           size="sm"
-          className="self-start"
+          className="self-start mt-1"
           onClick={() => setEditing(true)}
         >
-          {hasContent ? "Edit" : "Add details"}
-        </Button>
+          {hasContent ? "edit" : "add details"}
+        </PillButton>
       </div>
     );
   }
 
   return (
-    <form action={handleSave} className="flex flex-col gap-5">
+    <form action={handleSave} className="flex flex-col gap-4">
       {fields.map((field) => (
-        <Card key={field.name}>
-          <CardContent>
-            <Label
-              htmlFor={field.name}
-              className="text-xs uppercase tracking-wide text-muted-foreground"
-            >
-              {field.label}
-            </Label>
-            {field.inputType === "url" ? (
-              <Input
-                id={field.name}
-                name={field.name}
-                type="url"
-                placeholder={field.placeholder}
-                defaultValue={field.value}
-                className="mt-2"
-              />
-            ) : (
-              <Textarea
-                id={field.name}
-                name={field.name}
-                placeholder={field.placeholder}
-                defaultValue={field.value}
-                rows={5}
-                className="mt-2"
-              />
-            )}
-          </CardContent>
-        </Card>
+        <div key={field.name} className="bg-brand-surface rounded-2xl p-5">
+          <label
+            htmlFor={field.name}
+            className="text-xs font-black uppercase tracking-widest text-white/40"
+          >
+            {field.label}
+          </label>
+          {field.inputType === "url" ? (
+            <input
+              id={field.name}
+              name={field.name}
+              type="url"
+              placeholder={field.placeholder}
+              defaultValue={field.value}
+              className="mt-3 w-full bg-brand-base border border-white/10 text-white placeholder:text-white/20 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:border-white/30 transition-colors"
+            />
+          ) : (
+            <textarea
+              id={field.name}
+              name={field.name}
+              placeholder={field.placeholder}
+              defaultValue={field.value}
+              rows={5}
+              className="mt-3 w-full bg-brand-base border border-white/10 text-white placeholder:text-white/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 transition-colors resize-none"
+            />
+          )}
+        </div>
       ))}
 
-      <div className="flex gap-2">
-        <Button type="submit" size="sm">
-          Save
-        </Button>
-        <Button
+      <div className="flex items-center gap-3 mt-1">
+        <PillButton type="submit" color="orange" size="sm">save</PillButton>
+        <button
           type="button"
-          variant="ghost"
-          size="sm"
           onClick={() => setEditing(false)}
+          className="text-xs font-bold text-white/30 hover:text-white transition-colors"
         >
-          Cancel
-        </Button>
+          cancel
+        </button>
       </div>
     </form>
   );

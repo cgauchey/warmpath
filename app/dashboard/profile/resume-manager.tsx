@@ -2,11 +2,7 @@
 
 import { useRef, useState } from "react";
 import { addResume, deleteResume, type ResumeEntry } from "./actions";
-import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { PillButton } from "@/components/brand/pill-button";
 
 export function ResumeManager({ resumes }: { resumes: ResumeEntry[] }) {
   const [adding, setAdding] = useState(false);
@@ -68,107 +64,100 @@ export function ResumeManager({ resumes }: { resumes: ResumeEntry[] }) {
   return (
     <div className="flex flex-col gap-3">
       {resumes.map((r) => (
-        <Card key={r.created_at}>
-          <CardContent>
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0 flex-1">
-                <p className="font-medium text-sm">{r.label}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {new Date(r.created_at).toLocaleDateString()}
-                </p>
-                <p className="text-sm whitespace-pre-wrap mt-2 text-muted-foreground line-clamp-4">
-                  {r.text}
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-destructive shrink-0"
-                onClick={() => deleteResume(r.created_at)}
-              >
-                Remove
-              </Button>
+        <div key={r.created_at} className="bg-brand-surface rounded-2xl p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-white text-sm">{r.label}</p>
+              <p className="text-xs text-white/30 mt-0.5">
+                {new Date(r.created_at).toLocaleDateString()}
+              </p>
+              <p className="text-sm whitespace-pre-wrap mt-2 text-white/40 line-clamp-4">
+                {r.text}
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <button
+              className="text-xs font-bold text-brand-red/50 hover:text-brand-red transition-colors shrink-0"
+              onClick={() => deleteResume(r.created_at)}
+            >
+              remove
+            </button>
+          </div>
+        </div>
       ))}
 
       {adding ? (
-        <Card>
-          <CardContent>
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="label">Label</Label>
-                <Input
-                  id="label"
-                  placeholder='e.g. "Product Manager resume" or "SWE resume"'
-                  value={label}
-                  onChange={(e) => setLabel(e.target.value)}
-                />
-              </div>
+        <div className="bg-brand-surface rounded-2xl p-5">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="label" className="text-xs font-black uppercase tracking-widest text-white/40">Label</label>
+              <input
+                id="label"
+                placeholder='e.g. "Product Manager resume" or "SWE resume"'
+                value={label}
+                onChange={(e) => setLabel(e.target.value)}
+                className="w-full bg-brand-base border border-white/10 text-white placeholder:text-white/20 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:border-white/30 transition-colors"
+              />
+            </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label>Upload a file</Label>
-                <Input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.docx,.txt"
-                  onChange={handleFileChange}
-                  disabled={uploading}
-                  className="cursor-pointer"
-                />
-                {uploading && (
-                  <p className="text-xs text-muted-foreground">
-                    Extracting text...
-                  </p>
-                )}
-              </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-black uppercase tracking-widest text-white/40">Upload a file</label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.docx,.txt"
+                onChange={handleFileChange}
+                disabled={uploading}
+                className="text-sm text-white/60 file:mr-3 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer cursor-pointer"
+              />
+              {uploading && (
+                <p className="text-xs text-white/40">Extracting text...</p>
+              )}
+            </div>
 
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-border" />
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-card px-2 text-xs text-muted-foreground">
-                    or paste text
-                  </span>
-                </div>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-white/10" />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="text">Resume text</Label>
-                <Textarea
-                  id="text"
-                  placeholder="Paste your resume content here"
-                  rows={8}
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                />
-              </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
-              <div className="flex gap-2">
-                <Button size="sm" onClick={handleAdd}>
-                  Save
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={resetForm}
-                >
-                  Cancel
-                </Button>
+              <div className="relative flex justify-center">
+                <span className="bg-brand-surface px-3 text-xs text-white/30">or paste text</span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="text" className="text-xs font-black uppercase tracking-widest text-white/40">Resume text</label>
+              <textarea
+                id="text"
+                placeholder="Paste your resume content here"
+                rows={8}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="w-full bg-brand-base border border-white/10 text-white placeholder:text-white/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 transition-colors resize-none"
+              />
+            </div>
+
+            {error && <p className="text-sm text-brand-red">{error}</p>}
+
+            <div className="flex items-center gap-3">
+              <PillButton size="sm" color="orange" onClick={handleAdd}>save</PillButton>
+              <button
+                onClick={resetForm}
+                className="text-xs font-bold text-white/30 hover:text-white transition-colors"
+              >
+                cancel
+              </button>
+            </div>
+          </div>
+        </div>
       ) : (
-        <Button
-          variant="outline"
+        <PillButton
+          variant="outlined"
+          color="white"
           size="sm"
           className="self-start"
           onClick={() => setAdding(true)}
         >
-          Add resume
-        </Button>
+          add resume
+        </PillButton>
       )}
     </div>
   );

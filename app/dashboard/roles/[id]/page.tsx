@@ -49,54 +49,54 @@ export default async function RoleDetailPage({ params }: { params: Promise<{ id:
   }));
 
   return (
-    <div className="max-w-xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">{role.title}</h1>
-        <p className="text-sm text-muted-foreground mt-1">{role.companies?.name}</p>
-        <StageSelect roleId={id} currentStage={role.stage} />
-      </div>
-
-      {role.source_url && (
-        <a
-          href={role.source_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block text-sm underline underline-offset-4 text-muted-foreground hover:text-foreground transition-colors mb-8"
-        >
-          View job posting
-        </a>
-      )}
-
-      {role.job_description && (
-        <div className="mb-10">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Description</h2>
-          <CollapsibleDescription text={role.job_description} />
+    <div className="bg-brand-base -mx-6 -my-10 px-6 py-12 min-h-[calc(100vh-4rem)]">
+      <div className="max-w-xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-black text-white tracking-tight leading-tight">
+            {role.title}
+          </h1>
+          <p className="text-white/50 font-medium mt-1">{role.companies?.name}</p>
+          <StageSelect roleId={id} currentStage={role.stage} />
         </div>
-      )}
 
-      <section>
-        <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-4">
-          Prep
-        </h2>
-        <WhyGenerator roleId={id} sourceUrl={role.source_url} resumes={resumes} generationNotes={role.generation_notes} />
-      </section>
+        {role.source_url && (
+          <a
+            href={role.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block text-sm font-bold text-white/40 underline underline-offset-4 hover:text-white transition-colors mb-8"
+          >
+            view job posting ↗
+          </a>
+        )}
 
-      {answers.length > 0 && (
-        <section className="mt-10">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-4">
-            Saved answers
-          </h2>
-          <SavedAnswers answers={answers} roleId={id} />
+        {role.job_description && (
+          <div className="mb-10">
+            <h2 className="text-xs font-black uppercase tracking-widest text-white/30 mb-3">Description</h2>
+            <CollapsibleDescription text={role.job_description} />
+          </div>
+        )}
+
+        <section>
+          <h2 className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">Prep</h2>
+          <WhyGenerator roleId={id} sourceUrl={role.source_url} resumes={resumes} generationNotes={role.generation_notes} />
         </section>
-      )}
 
-      {companyName && (
-        <FindContacts
-          roleId={id}
-          companyName={companyName}
-          savedConnections={connections}
-        />
-      )}
+        {answers.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">Saved answers</h2>
+            <SavedAnswers answers={answers} roleId={id} />
+          </section>
+        )}
+
+        {companyName && (
+          <FindContacts
+            roleId={id}
+            companyName={companyName}
+            savedConnections={connections}
+          />
+        )}
+      </div>
     </div>
   );
 }

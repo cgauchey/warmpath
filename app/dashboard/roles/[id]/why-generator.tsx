@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { saveWhyAnswer, extractVoiceInsights, updateGenerationNotes } from "./actions";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { PillButton } from "@/components/brand/pill-button";
 import { Loader2 } from "lucide-react";
 
 type Resume = { label: string; text: string; created_at: string };
@@ -21,9 +19,7 @@ export function WhyGenerator({
   generationNotes: string | null;
 }) {
   const [questionType, setQuestionType] = useState("why_role");
-  const [selectedResumes, setSelectedResumes] = useState<number[] | "all">(
-    "all"
-  );
+  const [selectedResumes, setSelectedResumes] = useState<number[] | "all">("all");
   const [notes, setNotes] = useState(generationNotes ?? "");
   const [answer, setAnswer] = useState("");
   const [generatedText, setGeneratedText] = useState("");
@@ -39,20 +35,12 @@ export function WhyGenerator({
       const next = selectedResumes.includes(index)
         ? selectedResumes.filter((i) => i !== index)
         : [...selectedResumes, index];
-      if (next.length === resumes.length) {
-        setSelectedResumes("all");
-      } else {
-        setSelectedResumes(next);
-      }
+      setSelectedResumes(next.length === resumes.length ? "all" : next);
     }
   }
 
   function toggleAll() {
-    if (selectedResumes === "all") {
-      setSelectedResumes([]);
-    } else {
-      setSelectedResumes("all");
-    }
+    setSelectedResumes(selectedResumes === "all" ? [] : "all");
   }
 
   function isSelected(index: number) {
@@ -86,11 +74,7 @@ export function WhyGenerator({
       }
 
       const reader = res.body?.getReader();
-      if (!reader) {
-        setError("No response stream");
-        setStreaming(false);
-        return;
-      }
+      if (!reader) { setError("No response stream"); setStreaming(false); return; }
 
       const decoder = new TextDecoder();
       let accumulated = "";
@@ -108,16 +92,11 @@ export function WhyGenerator({
           if (!line.trim()) continue;
           try {
             const parsed = JSON.parse(line);
-            if (
-              parsed.type === "content_block_delta" &&
-              parsed.delta?.type === "text_delta"
-            ) {
+            if (parsed.type === "content_block_delta" && parsed.delta?.type === "text_delta") {
               accumulated += parsed.delta.text;
               setAnswer(accumulated);
             }
-          } catch {
-            // incomplete JSON, skip
-          }
+          } catch { /* incomplete JSON */ }
         }
       }
 
@@ -142,14 +121,13 @@ export function WhyGenerator({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="question_type">Question</Label>
+        <label className="text-xs font-black uppercase tracking-widest text-white/40">Question</label>
         <select
-          id="question_type"
           value={questionType}
           onChange={(e) => setQuestionType(e.target.value)}
-          className="w-full border border-input rounded-lg h-9 px-3 text-sm bg-transparent text-foreground transition-colors focus:border-ring focus:ring-3 focus:ring-ring/50 focus:outline-none"
+          className="w-full bg-brand-surface border border-white/10 text-white rounded-full px-5 py-2.5 text-sm font-medium focus:outline-none focus:border-white/30 transition-colors appearance-none cursor-pointer"
         >
           <option value="why_role">Why this role?</option>
           <option value="why_company">Why this company?</option>
@@ -159,28 +137,15 @@ export function WhyGenerator({
 
       {resumes.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          <Label>Resume</Label>
-          <div className="flex flex-col gap-1">
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input
-                type="checkbox"
-                checked={selectedResumes === "all"}
-                onChange={toggleAll}
-                className="rounded"
-              />
+          <label className="text-xs font-black uppercase tracking-widest text-white/40">Resume</label>
+          <div className="flex flex-col gap-1.5">
+            <label className="flex items-center gap-2.5 text-sm text-white/60 cursor-pointer">
+              <input type="checkbox" checked={selectedResumes === "all"} onChange={toggleAll} className="accent-brand-orange" />
               All resumes
             </label>
             {resumes.map((r, i) => (
-              <label
-                key={r.created_at}
-                className="flex items-center gap-2 text-sm cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={isSelected(i)}
-                  onChange={() => toggleResume(i)}
-                  className="rounded"
-                />
+              <label key={r.created_at} className="flex items-center gap-2.5 text-sm text-white/60 cursor-pointer">
+                <input type="checkbox" checked={isSelected(i)} onChange={() => toggleResume(i)} className="accent-brand-orange" />
                 {r.label}
               </label>
             ))}
@@ -189,66 +154,45 @@ export function WhyGenerator({
       )}
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="generation_notes">Anything else to include?</Label>
-        <Textarea
-          id="generation_notes"
+        <label className="text-xs font-black uppercase tracking-widest text-white/40">
+          Anything else to include?
+        </label>
+        <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="e.g. I spoke with someone on the team, I love their recent product launch, I'm particularly drawn to their approach to X…"
+          placeholder="e.g. I spoke with someone on the team, I love their recent product launch…"
           rows={3}
           disabled={streaming}
+          className="w-full bg-brand-surface border border-white/10 text-white placeholder:text-white/20 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 transition-colors resize-none"
         />
       </div>
 
-      <Button
-        size="sm"
-        className="self-start"
-        onClick={handleGenerate}
-        disabled={streaming}
-      >
-        {streaming ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
-            Generating
-          </>
-        ) : (
-          "Generate answer"
-        )}
-      </Button>
+      <PillButton color="orange" size="md" onClick={handleGenerate} disabled={streaming} className="self-start">
+        {streaming ? <><Loader2 className="h-4 w-4 animate-spin mr-1.5" />generating</> : "generate answer"}
+      </PillButton>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="text-sm text-brand-red">{error}</p>}
 
       {answer && (
         <div className="flex flex-col gap-3">
-          <Textarea
+          <textarea
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             rows={10}
             disabled={streaming}
+            className="w-full bg-brand-surface border border-white/10 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-white/30 transition-colors resize-none"
           />
           <div className="flex items-center gap-3">
-            <Button
-              size="sm"
-              onClick={handleSave}
-              disabled={saving || streaming || !answer.trim()}
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
-                  Saving
-                </>
-              ) : (
-                "Save"
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
+            <PillButton size="sm" color="orange" onClick={handleSave} disabled={saving || streaming || !answer.trim()}>
+              {saving ? <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />saving</> : "save"}
+            </PillButton>
+            <button
               onClick={() => setAnswer("")}
               disabled={saving || streaming}
+              className="text-xs font-bold text-white/30 hover:text-white transition-colors lowercase"
             >
-              Cancel
-            </Button>
+              cancel
+            </button>
           </div>
         </div>
       )}

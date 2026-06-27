@@ -1,25 +1,26 @@
 import { cn } from "@/lib/utils";
+import type { BrandColor } from "@/components/brand/pill-button";
+import { filledStyles } from "@/components/brand/pill-button";
 
-const roleStageColors: Record<string, string> = {
-  researching:  "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
-  applied:      "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300",
-  phone_screen: "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300",
-  onsite:       "bg-violet-50 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300",
-  offer:        "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300",
-  rejected:     "bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-400",
-};
-
-const contactStageColors: Record<string, string> = {
-  not_contacted:  "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
-  reached_out:    "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300",
-  responded:      "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300",
-  call_scheduled: "bg-violet-50 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300",
-  intro_made:     "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300",
+export const stageToBrandColor: Record<string, BrandColor> = {
+  // role stages
+  researching:  "white",
+  applied:      "blue",
+  phone_screen: "yellow",
+  onsite:       "purple",
+  offer:        "teal",
+  rejected:     "red",
+  // contact stages
+  not_contacted:  "white",
+  reached_out:    "blue",
+  responded:      "yellow",
+  call_scheduled: "purple",
+  intro_made:     "teal",
 };
 
 export function getStageColor(stage: string, type: "role" | "contact" = "role"): string {
-  const map = type === "role" ? roleStageColors : contactStageColors;
-  return map[stage] ?? roleStageColors.researching;
+  const color = stageToBrandColor[stage] ?? "white";
+  return filledStyles[color];
 }
 
 export function StatusBadge({
@@ -34,7 +35,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full capitalize",
+        "inline-flex items-center text-xs font-bold px-3 py-1 rounded-full lowercase",
         getStageColor(stage, type),
         className
       )}

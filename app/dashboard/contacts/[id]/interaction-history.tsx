@@ -18,30 +18,36 @@ export function InteractionHistory({ interactions, contactId }: { interactions: 
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">History</h2>
+        <h2 className="text-xs font-black uppercase tracking-widest text-white/30">History</h2>
         {interactions.length > 0 && (
           <button
             onClick={() => setAscending(!ascending)}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="text-xs font-bold text-white/30 hover:text-white transition-colors"
           >
-            {ascending ? "Oldest first ↑" : "Newest first ↓"}
+            {ascending ? "oldest first ↑" : "newest first ↓"}
           </button>
         )}
       </div>
-      {!interactions.length && <p className="text-sm text-muted-foreground">No interactions yet.</p>}
-      <div className="flex flex-col divide-y">
+      {!interactions.length && (
+        <p className="text-sm text-white/40">no interactions yet.</p>
+      )}
+      <div className="flex flex-col divide-y divide-white/10">
         {sorted.map((i) => (
-          <div key={i.id} className="py-3">
-            <div className="flex justify-between text-xs text-muted-foreground">
+          <div key={i.id} className="py-4">
+            <div className="flex justify-between text-xs text-white/40">
               <span>{i.type?.replace(/_/g, " ")}</span>
               <span>{new Date(i.interaction_date || i.created_at).toLocaleDateString()}</span>
             </div>
-            {i.summary && <p className="text-sm mt-1">{i.summary}</p>}
+            {i.summary && <p className="text-sm text-white/70 mt-1.5 leading-relaxed">{i.summary}</p>}
             {i.follow_up_date && (
-              <p className="text-xs text-muted-foreground mt-1">Follow up: {new Date(i.follow_up_date).toLocaleDateString()}</p>
+              <p className="text-xs text-white/30 mt-1">
+                follow up: {new Date(i.follow_up_date).toLocaleDateString()}
+              </p>
             )}
             <form action={deleteInteraction.bind(null, contactId, i.id)} className="mt-2">
-              <button type="submit" className="text-xs text-destructive hover:underline">Delete</button>
+              <button type="submit" className="text-xs font-bold text-brand-red/60 hover:text-brand-red transition-colors">
+                delete
+              </button>
             </form>
           </div>
         ))}
