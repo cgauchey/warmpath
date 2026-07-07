@@ -38,6 +38,15 @@ export type Role = {
   companies?: { name: string } | null;
 };
 
+export type CompanyList = {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  created_at: string;
+  company_list_items?: { id: string }[];
+};
+
 export type Interaction = {
   id: string;
   user_id: string;

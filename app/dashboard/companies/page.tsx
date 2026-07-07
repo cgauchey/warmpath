@@ -8,7 +8,7 @@ export default async function CompaniesPage() {
 
   const { data: companies } = await supabase
     .from("companies")
-    .select("id, name, industry, roles(id), contacts(id)")
+    .select("id, name, industry, roles(id, stage), contacts(id)")
     .order("name");
 
   return (

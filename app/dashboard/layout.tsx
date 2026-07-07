@@ -20,6 +20,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link href="/dashboard/contacts">contacts</Link>
             </PillButton>
             <PillButton variant="outlined" color="white" size="sm" asChild>
+              <Link href="/dashboard/lists">lists</Link>
+            </PillButton>
+            <PillButton variant="outlined" color="white" size="sm" asChild>
               <Link href="/dashboard/profile">profile</Link>
             </PillButton>
           </div>

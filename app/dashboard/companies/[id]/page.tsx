@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { StatusBadge } from "@/components/status-badge";
 import { NotesEditor } from "./notes-editor";
+import { ListMembership } from "./list-membership";
 
 export default async function CompanyDetailPage({
   params,
@@ -12,7 +13,11 @@ export default async function CompanyDetailPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: company }, { data: roles }, { data: contacts }] =
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [{ data: company }, { data: roles }, { data: contacts }, { data: allLists }, { data: memberItems }] =
     await Promise.all([
       supabase.from("companies").select("*").eq("id", id).single(),
       supabase
@@ -25,7 +30,22 @@ export default async function CompanyDetailPage({
         .select("id, name, role_title, stage, relationship")
         .eq("company_id", id)
         .order("created_at", { ascending: false }),
+      supabase
+        .from("company_lists")
+        .select("id, name")
+        .eq("user_id", user!.id)
+        .order("name"),
+      supabase
+        .from("company_list_items")
+        .select("list_id")
+        .eq("company_id", id),
     ]);
+
+  const memberListIds = new Set((memberItems ?? []).map((m) => m.list_id));
+  const lists = (allLists ?? []).map((l) => ({
+    ...l,
+    isMember: memberListIds.has(l.id),
+  }));
 
   if (!company) notFound();
 
@@ -113,7 +133,7 @@ export default async function CompanyDetailPage({
         )}
       </section>
 
-      <section>
+      <section className="mb-10">
         <h2 className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">
           Contacts
         </h2>
@@ -138,6 +158,13 @@ export default async function CompanyDetailPage({
             ))}
           </div>
         )}
+      </section>
+
+      <section>
+        <h2 className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">
+          Lists
+        </h2>
+        <ListMembership companyId={id} lists={lists} />
       </section>
     </div>
   );

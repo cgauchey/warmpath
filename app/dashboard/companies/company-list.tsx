@@ -7,25 +7,59 @@ type Company = {
   id: string;
   name: string;
   industry: string | null;
-  roles: { id: string }[];
+  roles: { id: string; stage: string }[];
   contacts: { id: string }[];
 };
 
+type ApplicationFilter = "all" | "applied" | "not_applied";
+
+function hasApplied(company: Company) {
+  return company.roles.some((r) => r.stage !== "researching");
+}
+
 export function CompanyList({ companies }: { companies: Company[] }) {
   const [query, setQuery] = useState("");
+  const [appFilter, setAppFilter] = useState<ApplicationFilter>("all");
 
-  const filtered = query
-    ? companies.filter((c) => {
-        const q = query.toLowerCase();
-        return (
-          c.name?.toLowerCase().includes(q) ||
-          c.industry?.toLowerCase().includes(q)
-        );
-      })
-    : companies;
+  const filtered = companies
+    .filter((c) => {
+      if (appFilter === "applied") return hasApplied(c);
+      if (appFilter === "not_applied") return !hasApplied(c);
+      return true;
+    })
+    .filter((c) => {
+      if (!query) return true;
+      const q = query.toLowerCase();
+      return (
+        c.name?.toLowerCase().includes(q) ||
+        c.industry?.toLowerCase().includes(q)
+      );
+    });
+
+  const tabs: { value: ApplicationFilter; label: string }[] = [
+    { value: "all", label: "all" },
+    { value: "applied", label: "applied" },
+    { value: "not_applied", label: "not applied" },
+  ];
 
   return (
     <>
+      <div className="flex gap-2 mb-4">
+        {tabs.map((t) => (
+          <button
+            key={t.value}
+            onClick={() => setAppFilter(t.value)}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${
+              appFilter === t.value
+                ? "bg-white text-brand-base"
+                : "bg-white/10 text-white/50 hover:bg-white/20 hover:text-white/80"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       <input
         type="search"
         value={query}
@@ -36,7 +70,7 @@ export function CompanyList({ companies }: { companies: Company[] }) {
 
       {!filtered.length && (
         <p className="text-sm text-white/40 font-medium">
-          {query ? "no companies found." : "no companies yet. add your first one."}
+          {query || appFilter !== "all" ? "no companies found." : "no companies yet. add your first one."}
         </p>
       )}
 
